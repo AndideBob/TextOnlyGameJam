@@ -65,7 +65,7 @@ public class DragonRoom extends Room {
 		StringBuilder description = new StringBuilder();
 		description.append("The moment you enter this room you know something is off. A roar echoes through it! ");
 		description.append("Ahead of you is a giant dragon! It has " + getScaleType() + " scales and " + getEyeType() + " eyes. ");
-		description.append("Its " + getWingType() + " are spread out. It has " + getHornsType() + " horns and " + getClawType() + " claws. ");
+		description.append("Its " + getWingType() + " wings are spread out. It has " + getHornsType() + " horns and " + getClawType() + " claws. ");
 		description.append("Proceed with caution.");
 		return description.toString();
 	}
@@ -87,6 +87,7 @@ public class DragonRoom extends Room {
 				return null;
 			}
 			if(firstMove){
+				firstMove = false;
 				return getDragonReaction();
 			}
 			switch(dominantType){

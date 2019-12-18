@@ -18,7 +18,7 @@ public class GameTextUtility {
 				lines.add(line);
 				line = "";
 			}
-			line += word + " ";
+			line += word + (word.contains(".") ? "" : " ");
 			if(word.contains("\n")){
 				lines.add(line);
 				line = "";

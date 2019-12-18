@@ -114,6 +114,7 @@ public class DungeonsForDummies extends Game {
 	}
 	
 	private void advanceRoom(){
+		textConsole.addText(" ", COLOR_DESCRIPTOR);
 		roomNumber++;
 		if(roomNumber >= roomList.size()){
 			Logger.logDebug("Finished all rooms!");
