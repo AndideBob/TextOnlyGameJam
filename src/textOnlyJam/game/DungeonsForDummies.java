@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.DebugGraphics;
 
+import lwjgladapter.datatypes.Color;
 import lwjgladapter.datatypes.LWJGLAdapterException;
 import lwjgladapter.game.Game;
 import lwjgladapter.logging.Logger;
@@ -16,6 +17,10 @@ import textOnlyJam.game.text.DrawTextManager;
 import textOnlyJam.game.text.Timer;
 
 public class DungeonsForDummies extends Game {
+	
+	private static final Color COLOR_DESCRIPTOR = new Color(0.2F, 0.6F, 0F, 1F);
+	private static final Color COLOR_ACTION = new Color(0.4F, 0.8F, 0.1F, 1F);
+	private static final Color COLOR_ERROR = new Color(0.8F, 0.1F, 0.1F, 1F);
 	
 	int iteration = 0;
 	int x = 0;
@@ -33,11 +38,10 @@ public class DungeonsForDummies extends Game {
 	public DungeonsForDummies() {
 		textConsole = new TextConsole(30, 16);
 		input = new InputLine(16);
-		textConsole.updateTimer(10, 12);
 		timer = new Timer(0, 0);
 		roomList = new ArrayList<>();
 		currentRoom = new MenuRoom();
-		textConsole.addText(currentRoom.getDescription());
+		textConsole.addText(currentRoom.getDescription(), COLOR_DESCRIPTOR);
 	}
 
 	@Override
@@ -56,12 +60,12 @@ public class DungeonsForDummies extends Game {
 	public void update(long deltaTime) throws LWJGLAdapterException {
 		timer.update(deltaTime);
 		input.update();
-		textConsole.updateTimer(timer.getMinutes(), timer.getSeconds());
+		textConsole.updateTimer(timer.getMinutes(), timer.getSeconds(), timer.getProgress());
 		String inputCommand = input.getInput();
 		if(inputCommand != null){
-			textConsole.addText(inputCommand);
+			textConsole.addText(inputCommand, COLOR_ACTION);
 			String result = currentRoom.handleCommand(inputCommand);
-			textConsole.addText(result);
+			textConsole.addText(result, currentRoom.wasLastCommandValid() ? COLOR_DESCRIPTOR : COLOR_ERROR);
 			if(currentRoom.isSolved()){
 				if(currentRoom instanceof MenuRoom){
 					startNewGame(((MenuRoom)currentRoom).getSelectedLevel());
@@ -91,7 +95,7 @@ public class DungeonsForDummies extends Game {
 			break;
 		}
 		currentRoom = roomList.get(roomNumber);
-		textConsole.addText(currentRoom.getDescription());
+		textConsole.addText(currentRoom.getDescription(), COLOR_DESCRIPTOR);
 	}
 	
 	private void advanceRoom(){
@@ -101,7 +105,7 @@ public class DungeonsForDummies extends Game {
 		}
 		else{
 			currentRoom = roomList.get(roomNumber);
-			textConsole.addText(currentRoom.getDescription());
+			textConsole.addText(currentRoom.getDescription(), COLOR_DESCRIPTOR);
 		}
 	}
 }
