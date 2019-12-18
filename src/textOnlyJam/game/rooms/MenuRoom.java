@@ -13,10 +13,10 @@ public class MenuRoom extends Room {
 	@Override
 	public String getDescription() {
 		StringBuilder description = new StringBuilder();
-		description.append("Welcome to dungeon for dummies. I hope you have your manual at hand, because the game will be unplayable without.\n ");
+		description.append("Welcome to dungeons for dummies. I hope you have your manual at hand, because the game will be unplayable without.\n ");
 		description.append("Pick a level by inputting the number:\n ");
 		description.append("1: Basics for Beginners\n ");
-		description.append("2: Deeper into the Dungeon");
+		description.append("2: Dragons deep down");
 		return description.toString();
 	}
 

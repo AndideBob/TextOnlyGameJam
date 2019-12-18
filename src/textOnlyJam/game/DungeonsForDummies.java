@@ -10,6 +10,7 @@ import lwjgladapter.game.Game;
 import lwjgladapter.logging.Logger;
 import textOnlyJam.game.console.InputLine;
 import textOnlyJam.game.console.TextConsole;
+import textOnlyJam.game.rooms.DragonRoom;
 import textOnlyJam.game.rooms.MenuRoom;
 import textOnlyJam.game.rooms.Room;
 import textOnlyJam.game.rooms.SecretWallRoom;
@@ -18,6 +19,7 @@ import textOnlyJam.game.text.Timer;
 
 public class DungeonsForDummies extends Game {
 	
+	private static final Color COLOR_MENU = new Color(0.4F, 0.1F, 0.5F, 1F);
 	private static final Color COLOR_DESCRIPTOR = new Color(0.2F, 0.6F, 0F, 1F);
 	private static final Color COLOR_ACTION = new Color(0.4F, 0.8F, 0.1F, 1F);
 	private static final Color COLOR_ERROR = new Color(0.8F, 0.1F, 0.1F, 1F);
@@ -38,10 +40,7 @@ public class DungeonsForDummies extends Game {
 	public DungeonsForDummies() {
 		textConsole = new TextConsole(30, 16);
 		input = new InputLine(16);
-		timer = new Timer(0, 0);
-		roomList = new ArrayList<>();
-		currentRoom = new MenuRoom();
-		textConsole.addText(currentRoom.getDescription(), COLOR_DESCRIPTOR);
+		switchToMenu();
 	}
 
 	@Override
@@ -70,11 +69,27 @@ public class DungeonsForDummies extends Game {
 				if(currentRoom instanceof MenuRoom){
 					startNewGame(((MenuRoom)currentRoom).getSelectedLevel());
 				}
+				else if(currentRoom instanceof DragonRoom){
+					if(((DragonRoom)currentRoom).isFailed()){
+						textConsole.addText("You died! Better luck next time!", COLOR_ERROR);
+						switchToMenu();
+					}
+					else{
+						advanceRoom();
+					}
+				}
 				else{
 					advanceRoom();
 				}
 			}
 		}
+	}
+	
+	private void switchToMenu(){
+		timer = new Timer(0, 0);
+		roomList = new ArrayList<>();
+		currentRoom = new MenuRoom();
+		textConsole.addText(currentRoom.getDescription(), COLOR_MENU);
 	}
 
 	private void startNewGame(int level){
@@ -89,9 +104,9 @@ public class DungeonsForDummies extends Game {
 			break;
 		case 2:
 			timer = new Timer(4, 0);
+			roomList.add(new DragonRoom());
 			roomList.add(new SecretWallRoom());
-			roomList.add(new SecretWallRoom());
-			roomList.add(new SecretWallRoom());
+			roomList.add(new DragonRoom());
 			break;
 		}
 		currentRoom = roomList.get(roomNumber);
