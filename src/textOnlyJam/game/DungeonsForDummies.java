@@ -1,34 +1,49 @@
 package textOnlyJam.game;
 
-import java.io.File;
+import java.util.ArrayList;
 
-import lwjgladapter.GameWindow;
-import lwjgladapter.GameWindowConstants;
+import javax.swing.DebugGraphics;
+
 import lwjgladapter.datatypes.LWJGLAdapterException;
 import lwjgladapter.game.Game;
-import lwjgladapter.gfx.Sprite;
-import lwjgladapter.gfx.SpriteMap;
-import lwjgladapter.input.ButtonState;
-import lwjgladapter.input.InputManager;
-import lwjgladapter.input.KeyboardKey;
 import lwjgladapter.logging.Logger;
-import lwjgladapter.utils.Randomizer;
+import textOnlyJam.game.console.InputLine;
+import textOnlyJam.game.console.TextConsole;
+import textOnlyJam.game.rooms.MenuRoom;
+import textOnlyJam.game.rooms.Room;
+import textOnlyJam.game.rooms.SecretWallRoom;
 import textOnlyJam.game.text.DrawTextManager;
+import textOnlyJam.game.text.Timer;
 
 public class DungeonsForDummies extends Game {
 	
-	String text = "";
 	int iteration = 0;
 	int x = 0;
 	int y = 0;
+	
+	private InputLine input;
+	private TextConsole textConsole;
+	
+	private ArrayList<Room> roomList;
+	private int roomNumber;
+	private Room currentRoom;
+	
+	private Timer timer;
 
 	public DungeonsForDummies() {
-		// TODO Auto-generated constructor stub
+		textConsole = new TextConsole(30, 16);
+		input = new InputLine(16);
+		textConsole.updateTimer(10, 12);
+		timer = new Timer(0, 0);
+		roomList = new ArrayList<>();
+		currentRoom = new MenuRoom();
+		textConsole.addText(currentRoom.getDescription());
 	}
 
 	@Override
 	public void draw() throws LWJGLAdapterException {
-		DrawTextManager.getInstance().drawText(x, y, text, 10);
+		textConsole.draw(0, 11);
+		input.draw(0, 0);
 	}
 
 	@Override
@@ -38,14 +53,55 @@ public class DungeonsForDummies extends Game {
 	}
 
 	@Override
-	public void update(long arg0) throws LWJGLAdapterException {
-		if(InputManager.instance.getKeyState(KeyboardKey.KEY_SPACE).equals(ButtonState.RELEASED)) {
-			x = Randomizer.getRNGNumber(0, GameWindowConstants.DEFAULT_SCREEN_WIDTH);
-			y = Randomizer.getRNGNumber(0, GameWindowConstants.DEFAULT_SCREEN_HEIGHT);
-			
-			text = "Text" + iteration++;
-			Logger.logDebug("x=" + x + " y=" + y + " iteration=" + iteration);
+	public void update(long deltaTime) throws LWJGLAdapterException {
+		timer.update(deltaTime);
+		input.update();
+		textConsole.updateTimer(timer.getMinutes(), timer.getSeconds());
+		String inputCommand = input.getInput();
+		if(inputCommand != null){
+			textConsole.addText(inputCommand);
+			String result = currentRoom.handleCommand(inputCommand);
+			textConsole.addText(result);
+			if(currentRoom.isSolved()){
+				if(currentRoom instanceof MenuRoom){
+					startNewGame(((MenuRoom)currentRoom).getSelectedLevel());
+				}
+				else{
+					advanceRoom();
+				}
+			}
 		}
 	}
 
+	private void startNewGame(int level){
+		roomNumber = 0;
+		roomList.clear();
+		switch(level){
+		case 1:
+			timer = new Timer(5, 0);
+			roomList.add(new SecretWallRoom());
+			roomList.add(new SecretWallRoom());
+			roomList.add(new SecretWallRoom());
+			break;
+		case 2:
+			timer = new Timer(4, 0);
+			roomList.add(new SecretWallRoom());
+			roomList.add(new SecretWallRoom());
+			roomList.add(new SecretWallRoom());
+			break;
+		}
+		currentRoom = roomList.get(roomNumber);
+		textConsole.addText(currentRoom.getDescription());
+	}
+	
+	private void advanceRoom(){
+		roomNumber++;
+		if(roomNumber >= roomList.size()){
+			Logger.logDebug("Finished all rooms!");
+		}
+		else{
+			currentRoom = roomList.get(roomNumber);
+			textConsole.addText(currentRoom.getDescription());
+		}
+	}
 }
