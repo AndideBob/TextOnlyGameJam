@@ -60,6 +60,11 @@ public class InputLine {
 		}
 	}
 	
+	public void clear() {
+		currentLine = "";
+		confirmed = false;
+	}
+	
 	public void draw(int x, int y){
 		String line = currentLine;
 		line += (line.length() < maxLength && blinkState < 10 ? "#" : "");

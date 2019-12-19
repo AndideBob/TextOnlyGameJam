@@ -8,8 +8,8 @@ public class TreasureRoom extends Room {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder description = new StringBuilder();
+		return description.toString();
 	}
 
 	@Override

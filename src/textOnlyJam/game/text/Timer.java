@@ -4,10 +4,12 @@ public class Timer {
 	
 	private long internalTimer;
 	private long startTimer;
+	private boolean hasTime;
 
 	public Timer(int minutes, int seconds) {
 		internalTimer = seconds * 1000L + minutes * 60000L;
 		startTimer = internalTimer;
+		hasTime = internalTimer > 0;
 	}
 	
 	public void update(long deltaMillis){
@@ -19,18 +21,18 @@ public class Timer {
 	}
 	
 	public boolean isFinished(){
-		return internalTimer <= 0L;
+		return hasTime && internalTimer <= 0L;
 	}
 	
 	public int getMinutes(){
-		if(!isFinished()){
+		if(internalTimer > 0L){
 			return (int)(internalTimer / 60000L) % 60;
 		}
 		return 0;
 	}
 
 	public int getSeconds(){
-		if(!isFinished()){
+		if(internalTimer > 0L){
 			return (int)(internalTimer / 1000L) % 60;
 		}
 		return 0;

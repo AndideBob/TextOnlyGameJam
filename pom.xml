@@ -107,6 +107,7 @@
         <archive>
           <manifest>
             <mainClass>textOnlyJam.main.Main</mainClass>
+            <addClasspath>true</addClasspath>
           </manifest>
         </archive>
         <descriptorRefs>

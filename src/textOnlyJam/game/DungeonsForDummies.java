@@ -24,6 +24,7 @@ public class DungeonsForDummies extends Game {
 	private static final Color COLOR_DESCRIPTOR = new Color(0.2F, 0.6F, 0F, 1F);
 	private static final Color COLOR_ACTION = new Color(0.4F, 0.8F, 0.1F, 1F);
 	private static final Color COLOR_ERROR = new Color(0.8F, 0.1F, 0.1F, 1F);
+	private static final Color COLOR_VICTORY = new Color(0.8F, 0.8F, 0.1F, 1F);
 	
 	int iteration = 0;
 	int x = 0;
@@ -59,28 +60,35 @@ public class DungeonsForDummies extends Game {
 	@Override
 	public void update(long deltaTime) throws LWJGLAdapterException {
 		timer.update(deltaTime);
-		input.update();
-		textConsole.updateTimer(timer.getMinutes(), timer.getSeconds(), timer.getProgress());
-		String inputCommand = input.getInput();
-		if(inputCommand != null){
-			textConsole.addText(inputCommand, COLOR_ACTION);
-			String result = currentRoom.handleCommand(inputCommand);
-			textConsole.addText(result, currentRoom.wasLastCommandValid() ? COLOR_DESCRIPTOR : COLOR_ERROR);
-			if(currentRoom.isSolved()){
-				if(currentRoom instanceof MenuRoom){
-					startNewGame(((MenuRoom)currentRoom).getSelectedLevel());
-				}
-				else if(currentRoom instanceof DragonRoom){
-					if(((DragonRoom)currentRoom).isFailed()){
-						textConsole.addText("You died! Better luck next time!", COLOR_ERROR);
-						switchToMenu();
+		if(timer.isFinished()) {
+			input.clear();
+			textConsole.addText("You ran out of time! Try to be faster next time!", COLOR_ERROR);
+			switchToMenu();
+		}
+		else {
+			input.update();
+			textConsole.updateTimer(timer.getMinutes(), timer.getSeconds(), timer.getProgress());
+			String inputCommand = input.getInput();
+			if(inputCommand != null){
+				textConsole.addText(inputCommand, COLOR_ACTION);
+				String result = currentRoom.handleCommand(inputCommand);
+				textConsole.addText(result, currentRoom.wasLastCommandValid() ? COLOR_DESCRIPTOR : COLOR_ERROR);
+				if(currentRoom.isSolved()){
+					if(currentRoom instanceof MenuRoom){
+						startNewGame(((MenuRoom)currentRoom).getSelectedLevel());
+					}
+					else if(currentRoom instanceof DragonRoom){
+						if(((DragonRoom)currentRoom).isFailed()){
+							textConsole.addText("You died! Better luck next time!", COLOR_ERROR);
+							switchToMenu();
+						}
+						else{
+							advanceRoom();
+						}
 					}
 					else{
 						advanceRoom();
 					}
-				}
-				else{
-					advanceRoom();
 				}
 			}
 		}
@@ -118,7 +126,7 @@ public class DungeonsForDummies extends Game {
 		textConsole.addText(" ", COLOR_DESCRIPTOR);
 		roomNumber++;
 		if(roomNumber >= roomList.size()){
-			Logger.logDebug("Finished all rooms!");
+			textConsole.addText("You did it! You successfully mastered this dungeon! Congratulations!", COLOR_VICTORY);
 		}
 		else{
 			currentRoom = roomList.get(roomNumber);
