@@ -291,7 +291,7 @@ public class DragonRoom extends Room {
 	}
 	
 	private String getDeathReaction(){
-		return "You missjudged your actions and the dragon makes easy work of you. A good snack for a glorious beast!";
+		return "You misjudged your actions and the dragon makes easy work of you. A good snack for a glorious beast!";
 	}
 	
 	private String getDragonReaction(){

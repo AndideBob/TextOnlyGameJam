@@ -11,6 +11,7 @@ import lwjgladapter.logging.Logger;
 import textOnlyJam.game.console.InputLine;
 import textOnlyJam.game.console.TextConsole;
 import textOnlyJam.game.rooms.DragonRoom;
+import textOnlyJam.game.rooms.MazeRoom;
 import textOnlyJam.game.rooms.MenuRoom;
 import textOnlyJam.game.rooms.Room;
 import textOnlyJam.game.rooms.SecretWallRoom;
@@ -97,15 +98,15 @@ public class DungeonsForDummies extends Game {
 		roomList.clear();
 		switch(level){
 		case 1:
-			timer = new Timer(5, 0);
+			timer = new Timer(4, 0);
+			roomList.add(new MazeRoom());
 			roomList.add(new SecretWallRoom());
-			roomList.add(new SecretWallRoom());
-			roomList.add(new SecretWallRoom());
+			roomList.add(new MazeRoom());
 			break;
 		case 2:
-			timer = new Timer(4, 0);
-			roomList.add(new DragonRoom());
+			timer = new Timer(5, 0);
 			roomList.add(new SecretWallRoom());
+			roomList.add(new MazeRoom());
 			roomList.add(new DragonRoom());
 			break;
 		}
